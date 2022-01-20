@@ -6,25 +6,43 @@ const App: React.FC = () => {
 
   const [pokemon, setPokemon] = useState<Array<any>>([]);
   const [error, setError] = useState<boolean>(false);
+  
+
 
   useEffect(() => {
 
-    fetch('https://pokeapi.co/api/v2/pokemongg')
-      .then(res => res.status < 399 ? res.json() : Promise.reject(res.statusText))
-      // .then(res => {
-      //   if(res.status < 399) {
-      //     return res.json();
-      //   } else {
-      //     return Promise.reject(res.statusText);
-      //   }
-      // })
-      .then(data => {
+    (async () => {
+      try {
+        const res = await fetch('https://pokeapi.co/api/v2/pokemon');
+        if(res.status > 399) {
+          throw new Error(res.statusText);
+        }
+  
+        const data = await res.json();
         setPokemon(data.results);
-      })
-      .catch(err => {
+      } catch(err) {
         console.error('erroraccio', err);
         setError(true);
-      })
+      }
+      
+    })();
+
+    
+      // .then(res => res.status < 399 ? res.json() : Promise.reject(res.statusText))
+      // // .then(res => {
+      // //   if(res.status < 399) {
+      // //     return res.json();
+      // //   } else {
+      // //     return Promise.reject(res.statusText);
+      // //   }
+      // // })
+      // .then(data => {
+      //   setPokemon(data.results);
+      // })
+      // .catch(err => {
+      //   console.error('erroraccio', err);
+      //   setError(true);
+      // })
 
     // try{
       
