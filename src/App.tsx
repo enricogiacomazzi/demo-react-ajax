@@ -6,6 +6,7 @@ const App: React.FC = () => {
 
   const [pokemon, setPokemon] = useState<Array<any>>([]);
   const [error, setError] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(0);
   
 
 
@@ -13,7 +14,7 @@ const App: React.FC = () => {
 
     (async () => {
       try {
-        const res = await fetch('https://pokeapi.co/api/v2/pokemon');
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon?offset=${page * 20}&limit=20`);
         if(res.status > 399) {
           throw new Error(res.statusText);
         }
@@ -25,36 +26,14 @@ const App: React.FC = () => {
         setError(true);
       }
       
-    })();
-
-    
-      // .then(res => res.status < 399 ? res.json() : Promise.reject(res.statusText))
-      // // .then(res => {
-      // //   if(res.status < 399) {
-      // //     return res.json();
-      // //   } else {
-      // //     return Promise.reject(res.statusText);
-      // //   }
-      // // })
-      // .then(data => {
-      //   setPokemon(data.results);
-      // })
-      // .catch(err => {
-      //   console.error('erroraccio', err);
-      //   setError(true);
-      // })
-
-    // try{
-      
-    // } catch (e) {
-    //   console.log('err 2', e)
-    // }
-    
-  }, []);
+    })();    
+  }, [page]);
 
   return (
     <>
       {error && <div>Errore!!!</div>}
+      <button disabled={page === 0} onClick={() => setPage(page - 1)}>indietro</button>
+      <button onClick={() => setPage(page + 1)}>avanti</button>
       <ul>
         {pokemon.map(p => <li key={p.name}>{p.name}</li>)}
       </ul>
