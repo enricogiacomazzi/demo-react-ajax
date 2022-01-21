@@ -3,31 +3,51 @@ import logo from './logo.svg';
 import './App.css';
 import { PokemonResponseModel } from './models/PokemonResponseModel';
 import axios from 'axios';
-import { GetPokemon } from './api';
+import { CreateTodo, DeleteTodo, EditTodo, EditTodo2, GetPokemon, GetTodos } from './api';
 import { useQuery } from 'react-query';
+import { TodoModel, TodosModel } from './models/TodoModel';
+import TodoList from './components/TodoList';
+import AddTodo from './components/AddTodo';
 
 const App: React.FC = () => {
+  const [todos, setTodos] = useState<Array<TodoModel>>([]);
 
-  const [url, setUrl] = useState<string>('https://pokeapi.co/api/v2/pokemon');
-  // const hash = `${url}?`.replace(/^.*\?/, '');
+  useEffect(() => {
+    GetTodos().then(res => setTodos(res));
+    // (async () => {
+    //   setTodos(await GetTodos())
+    // })()
+  }, []);
 
-  const {isLoading, error, data: pokemon } = useQuery('pokemon', () =>  GetPokemon(url))
 
-  if(isLoading) {
-    return (
-      <h1>LOADING...</h1>
-    )
+  const addTodoHandler = async (todo: Omit<TodoModel, 'id'>) => {
+    const newTodo = await CreateTodo(todo);
+    setTodos([...todos, newTodo]);
+  }
+
+  const toggleCompletedhandler = async (todo: TodoModel) => {
+    const res = await EditTodo2({id: todo.id, completed: !todo.completed});
+    setTodos(todos.map(t => t.id === res.id ? res : t));
+  }
+
+  const DeleteTodoHandler = async (todo: TodoModel) => {
+    try {
+      await DeleteTodo(todo);
+      setTodos(todos.filter(t => t.id !== todo.id));
+    } catch (e) {
+        alert('todo non trovato');
+    }
+    
   }
 
   return (
-    <>
-      {error && <div>Errore!!!</div>}
-      <button disabled={!pokemon?.previous} onClick={() => setUrl(pokemon?.previous ?? '')}>indietro</button>
-      <button disabled={!pokemon?.next} onClick={() => setUrl(pokemon?.next ?? '')}>avanti</button>
-      <ul>
-        {pokemon?.results?.map(p => <li key={p.name}>{p.name}</li>)}
-      </ul>
-    </>
+    <div style={{margin: '50px'}}>
+      <TodoList 
+        todos={todos}
+        toggleCompleted={toggleCompletedhandler}
+        deleteTodo={DeleteTodoHandler}/>
+      <AddTodo addTodo={addTodoHandler}/>
+    </div>
     
   )
 }
