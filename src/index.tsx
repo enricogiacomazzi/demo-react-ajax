@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import axios, { AxiosRequestConfig } from 'axios';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 
 // Add a request interceptor
@@ -22,9 +23,14 @@ axios.interceptors.request.use(function (config: AxiosRequestConfig) {
   return Promise.reject(error);
 });
 
+const queryClient = new QueryClient();
+
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <QueryClientProvider client={queryClient}>
+      <App />
+      <App />
+     </QueryClientProvider> 
   </React.StrictMode>,
   document.getElementById('root')
 );

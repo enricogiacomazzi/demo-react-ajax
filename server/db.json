@@ -1,0 +1,20 @@
+{
+  "todos": [
+    {
+      "text": "studiare react",
+      "completed": true,
+      "id": 2
+    },
+    {
+      "text": "dormire",
+      "completed": false,
+      "id": 3
+    },
+    {
+      "text": "dormire",
+      "completed": false,
+      "id": 4
+    }
+  ],
+  "users": []
+}

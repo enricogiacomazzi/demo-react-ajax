@@ -3,27 +3,21 @@ import logo from './logo.svg';
 import './App.css';
 import { PokemonResponseModel } from './models/PokemonResponseModel';
 import axios from 'axios';
+import { GetPokemon } from './api';
+import { useQuery } from 'react-query';
 
 const App: React.FC = () => {
 
-  const [pokemon, setPokemon] = useState<PokemonResponseModel | undefined>(undefined);
-  const [error, setError] = useState<boolean>(false);
   const [url, setUrl] = useState<string>('https://pokeapi.co/api/v2/pokemon');
-  
+  // const hash = `${url}?`.replace(/^.*\?/, '');
 
+  const {isLoading, error, data: pokemon } = useQuery('pokemon', () =>  GetPokemon(url))
 
-  useEffect(() => {
-
-    (async () => {
-      try {
-        setPokemon((await axios.get<PokemonResponseModel>(url)).data);
-      } catch(err) {
-        console.error('erroraccio', err);
-        setError(true);
-      }
-      
-    })();    
-  }, [url]);
+  if(isLoading) {
+    return (
+      <h1>LOADING...</h1>
+    )
+  }
 
   return (
     <>
